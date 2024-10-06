@@ -36,6 +36,33 @@ class _MovieslistimdbState extends State<Movieslistimdb> {
   @override
   Widget build(BuildContext context) {
 
-    return const Placeholder();
+    return FutureBuilder<List<Movie>>(
+      future:fetchMovies(), 
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator()); // Loading indicator
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}')); // Error message
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text('No movies found.')); // No data message
+        }
+
+        final movies = snapshot.data!;
+        return ListView.builder(
+          itemCount: movies.length,
+          itemBuilder: (context, index) {
+            final movie = movies[index];
+            return Card(
+              margin: EdgeInsets.all(8.0),
+              child: ListTile(
+                title: Text(movie.name),
+                
+                leading: Image.network(movie.imageUrl),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 }
