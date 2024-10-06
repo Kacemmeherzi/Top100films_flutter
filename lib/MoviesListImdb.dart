@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app/Moviedetaills.dart';
 import 'package:app/movie.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -13,7 +14,7 @@ class Movieslistimdb extends StatefulWidget {
 
 class _MovieslistimdbState extends State<Movieslistimdb> {
 
-  List<Movie> movies = [] ;
+late Future<List<Movie>> futureMovies;
   Future<List<Movie>> fetchMovies() async {
     final String apiKey = '771b450204msha3d9833daf12e77p10263bjsnbd0aafc1554f'; 
     final String baseUrl = 'https://imdb-top-100-movies.p.rapidapi.com/';
@@ -24,14 +25,17 @@ class _MovieslistimdbState extends State<Movieslistimdb> {
     };
     final response = await http.get(Uri.parse('$baseUrl?api_key=$apiKey'),headers: apiheaders);
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> json = jsonDecode(response.body);
-      final List<dynamic> results = json['results'];
-
-      return results.map((movie) => Movie.fromJson(movie)).toList();
-    } else {
-      throw Exception('Failed to load movies');
-    }
+   if (response.statusCode == 200) {
+    List<dynamic> jsonData = json.decode(response.body);
+    return jsonData.map((movieJson) => Movie.fromJson(movieJson)).toList();
+  } else {
+    throw Exception('Failed to load movies');
+  }
+  }
+   @override
+  void initState() {
+    super.initState();
+    this.futureMovies = fetchMovies() ;
   }
   @override
   Widget build(BuildContext context) {
@@ -53,13 +57,60 @@ class _MovieslistimdbState extends State<Movieslistimdb> {
           itemBuilder: (context, index) {
             final movie = movies[index];
             return Card(
-              margin: EdgeInsets.all(8.0),
-              child: ListTile(
-                title: Text(movie.name),
-                
-                leading: Image.network(movie.imageUrl),
+              
+                shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
               ),
-            );
+              elevation: 5,
+              margin: EdgeInsets.symmetric(vertical: 10.0),
+              child:InkWell( onTap: (){
+                Navigator.push(
+                               context,
+                               MaterialPageRoute(builder: (context) => Moviedetaills(movie: movie)));
+              },
+                child: 
+               Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(15.0),
+                      topRight: Radius.circular(15.0),
+                    ),
+                    child: Image.network(
+                    movie.image,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Center(
+                      child: Text(
+                     movie.title,
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+
+
+
+
+
+
+
+
+
+
+
+             ) );
+            
           },
         );
       },
