@@ -10,16 +10,16 @@ class Moviedetaills extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  AppBar(title:  Text(movie.name),
-      ), body :   Center (child :  Column(
+      appBar:  AppBar(title:  Text(movie.title),
+      ), body : SingleChildScrollView(child:   Column(
           children: [
-               Image.network(movie.imageUrl),
-               Text(movie.name),
+               Image.network(movie.image),
+               Text(movie.title),
                Text(movie.description)
 
           ],
-      ))
-    );
+      ))) ; 
+    
   
   }
 }
