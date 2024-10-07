@@ -16,7 +16,7 @@ class _MovieslistimdbState extends State<Movieslistimdb> {
 
 late Future<List<Movie>> futureMovies;
   Future<List<Movie>> fetchMovies() async {
-    final String apiKey = '771b450204msha3d9833daf12e77p10263bjsnbd0aafc1554f'; 
+    final String apiKey = ''; 
     final String baseUrl = 'https://imdb-top-100-movies.p.rapidapi.com/';
     final apiheaders = {
        "x-rapidapi-host" :  "imdb-top-100-movies.p.rapidapi.com" , 
